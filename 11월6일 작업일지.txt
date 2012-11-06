@@ -180,7 +180,67 @@ Task 와 Tradestat 모델의 create method 를 설정
 
 안드로이드 코드를 전부 정리하고 딜 모듈을 다시 개발하자.
 
-take a rest.
+==============================take a rest=============================
+
+다른 코드는 모듈을 수정.
+
+Facebook 인증 토큰을 Post 메서드로 전송하자.
+SessionStore.java
+
+HttpPost에서 헤더값을 세팅해주자
+facebook_token.put("token", token);
+StringEntity se = new StringEntity(facebooktoken.toString());
+post.setEntity(se);
+post.setHeader("Accept", "application/vnd.batontouch." + Global.version);
+
+
+하지만 response 에러가 난다.
+Log.e("my", e.getClass().getName() + e.getMessage() + " clpt")
+
+Koala::Facebook::APIError
+An active access token must be used to query information about the current user.
+
+*활성화된 액세스 토큰이 현재유저에 관한 정보에 쿼리를 보내기 위해 사용되어져야한다?
+
+일단 토큰을 찍어서 레일스 콘솔에서 테스트를 해보자.
+
+Get 메서드로 바꿔서 하니 바로 적용이 된다.
+
+페이스북 인증은 완료되었고 일반 로그인을 하려니 Unauthorized 상태코드가 계속 뜬다.
+
+post.setHeader("Content-type","application/json");
+컨텐트타입을 지정해주지 않으니 에러가 났다.
+
+registrations 까지 완성.
+회원 모듈을 전부 API versioning 했다... 
+
+다시 딜 모듈로 돌아가자.
+
+현재 기프티콘 모듈을 제외하고 생성 모듈을 api versioning에 맞춰서 다시 손보자.
+
+* 모듈은 Api::V1:: 로 쓸수있다.
+
+
+EditText 를 디폴트로하면 중간부터 쓰는데 첫줄에 주는 옵션을 찾아보자. 스터디움 코드에 있다. 없나?
+android:gravity="top"
+
+옵션을 주면 첫줄부터 쓸수있다.
+잘 생성한다.
+해당하지않는 칼럼이 있으면 문제가 생긴다.
+
+이제 딜 모듈에서 제안하기를 하면 task에 대한 나의 tradestat이 생성된다.
+
+AnyncTask 에서 tradestat 생성 모듈을 만든다.
+생성 모듈을 만들었으나 중복체크가 안된다.
+add_index :tradestats, [:client_id, :task_id], unique: true
+
+BatonManage activity 에 FrameLayout으로 두개를 구분해놓았다. 리스트를 다르게해서 어댑터를 넣어보자.
+
+구분이된다.
+
+오늘은 감기때문에 몸상태가 좋지않다. 여기까지하고 일단 내일 다시 어댑터를 작업하자.
+
+
 
 
 
