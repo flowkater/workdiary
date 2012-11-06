@@ -1,0 +1,74 @@
+<=== Deal 로직 정리
+
+이제 tradestats 를 생성했기 때문에 클라이언트들이 유저가 이를 select 하는 action이 필요하다.
+
+선택된 클라이언트의 tradestat 의 status가 true로 변경되고
+@tradestat.update_attributes(status:true)
+task 의 상태가 업데이트 된다. 진행중으로.
+@task.update_attributes(status:1)
+이때 선택된 클라이언트에겐 일을 진행하라는 푸시메시지가, 나머지에겐 일이 불발됬다는 푸시메시지가 가야된다.
+그리고 이 시점부터 일이 취소가 되거나 문제가 생기면 만료처리가 된다. -1 그전엔 그냥 삭제.
+클라이언트는 일을 진행을 하고 일이 완료가 되면 일이 완료되었다는 버튼과 리뷰를 작성할 수 있다.
+일이 완료가 되면 유저는 일을 확인하고 완료버튼 또는 취소 버튼을 누를 수 있다. 
+
+=====>
+
+Task에 Update 메서드를 작성하고 커스터마이징을 하자.
+컨트롤러에서 redering 할때 status 에 들어가는 키워드를 살펴보자.
+http://www.codyfauser.com/2008/7/4/rails-http-status-code-to-symbol-mapping
+status 와 head 의 차이점을 살펴보자. 똑같은데 줄여서 명칭.
+Restful 하게 유지를 하고 Task의 update 메서드와 tradestat의 update 메서드를 같이 호출하자.
+status 와 head 가 똑같은 head로 했을때 더블렌더 에러가 난다.
+
+status=0 으로 put 메서드를 작동시켰을때 성공했다는 메시지가 오지만.. 적용이 안된다.
+스터디움에서 값을 담는 폼을 살펴보자.
+comment[body]의 형태로 전송된다.
+그러면 task[status] 적용된다!
+
+공유기를 껏다키면 아이피가 바뀐다.
+
+잘받아온다. 다시 정리하고 seeding을 해서 tradestat을 처리해보자.
+
+결제모듈을 처리하려니 회원처리가 되어있어야된다.
+일단 API 를 정리하고 들어가자.
+
+<====================
+
+1. @user 가 @task 를 Create [POST] - 딜 발행 -> @giftcon update [PUT] & @user의 쿠키 감소
+2. @client 가 @task에 @tradestat 을 Create [POST] - 클라이언트 제안
+ - @client2, @client3..
+3. @user 가 @task의 @tradestat 을 Update [PUT] tradestat[status]=true - 유저가 선택
+ - 동시에 @task 를 Update[PUT] tast[status]=1 - 유저가 선택
+
+ ... 일 진행  
+
+4. @client 가 @task의 task[status]=2 로 Update [PUT] - 클라이언트 일 완료
+ - 이때부터 리뷰발행 가능
+5. @user 가 @task의 tast[status]=3 로 Update[PUT] - 유저 확인
+ - 일이 완료가 되지 않았으면 -1
+6. 확인이되면 @task의 쿠키가 소비되고 선택된 @giftcon 이 클라이언트에게 발행
+
+
+=====================>
+하다보니 status 분기가 더 필요한듯.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

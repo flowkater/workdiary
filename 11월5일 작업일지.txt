@@ -1,0 +1,351 @@
+거래 모듈
+
+ API 를 RABL 로 변경. 근데 지금 gemfile 에 Jbuilder 가 있고 rabl 두개가 있는데
+render :json 으로 했을때 현재 rabl 이 적용되지 않는다.
+
+1. jbuilder 를 제거하고 railscasts 코드를 다시 살펴볼것
+ 코드를 다시 살펴보았는데. jBuilder 도 삭제했음. 그런데도 rabl이 적용되지 않는다.
+현재 rabl의 코드
+<
+collection @tasks
+attributes :id, :name, :description, :status
+>
+컨트롤러 코드
+@tasks = Task.all
+라우팅도 변화가 없고.. 
+
+2. 다시 한번 예제를 비교해보고 Gemfile 을 확인해보자.
+서버 종료 후 Bundle 커맨드를 치고 다시 서버 시작을 하니 적용되었다. 그러나
+현재 파싱하기 어려운 형태로 나타났다.
+[
+{
+	task:{
+		id: 1
+		...
+	}
+}
+]
+
+3. root json 명명어를 false 한 상태에서 안드로이드 앱으로 리스트를 가져오는지 테스트
+JSON Array 형태로 가져와서 GSON 파싱할때 에러가 발생했다.
+ * Tasks tasks = gson.fromJson(mResult, Tasks.class)
+
+4. JSON Array 형태를 변형해보자.
+에러는 안나나 값을 전혀 가져오지 못하고 있다. 안드로이드 딴에서 확인해봐야겠다.
+값은 못가져왔으나 
+객체가 두개가 생성이 되었다. mArrayList 에 저장되는 객체정보를 확인하자.
+아니다 task, object_root 때문에 파싱을 못하는것 같다.
+서버가 늦어서 바로 가져오진 못했는데 jBuilder 형태와 비슷하게 인덱스를 구성했다.
+다시 가져오기 하니 파싱을 한다.
+현재 index.json.rabl 의 형태
+collection @tasks, root: "tasks"
+attributes :id, :name, :description, :status
+config.rb 에서
+config.include_json_root = false 이다.
+
+5. RABL 로 바꾼건 API versioning 때문이다. namespace 라우팅을 적용해도 rabl이 적용되는지 확인해보자.
+Template Missing 된 에러를 보니깐 jBuilder 로도 API Versioning 구성을 할수있는것 같다.
+그래도 rabl이 유연한거 같으니 rabl을 사용해보자.
+  namespace :api, defaults: {format: 'json', handlers: [:rabl]} do
+    namespace :v1 do
+      resources :tasks
+    end
+  end
+
+라우팅을 구성했으나 rabl, 컨트롤러에서 
+def index
+	@tasks = Task.all		
+	respond_with @tasks
+end
+
+위와 같은 코드로 구성하니 render :json 가 똑같이 기본 포맷이 나온다.
+respond_with 의 기능을 잘모르겠으니 다시 이해해보자.
+
+respond_with 를 이해하기 위해선 아래 코드를 보면 된다.
+def index  
+  @products = Product.all  
+  respond_to do |format|  
+    format.html  
+    format.xml { render :xml => @products }  
+  end  
+end 
+
+class ProductsController < ApplicationController  
+  respond_to :html, :xml  
+    
+  def index  
+    @products = Product.all  
+    respond_with @products  
+    end  
+  end  
+  
+  # Other methods  
+end
+
+즉 현재 respond 코드가 동작하기 때문에 기본 render :json이 나온다는 것.
+
+흠, 그럼 어떻게 해야할까? 일단 railscasts #350 에서 rabl 관련된 키워드로 검색을 해보자.
+검색을 해보니
+One thing I have started doing recently for a few APIs is to support versioning simply using folders with RABL templating. Depending on your situation, it can greatly reduce code duplication. Simply setup a single api controller and then render the corresponding template based on a version parameter i.e render "#{params[:version]}/show" and then create templates for each version (users/v1/show, users/v2/show). Since the controller between versions is typically largely unchanged in most cases, this may be an alternative approach. If anyone is curious for more details, perhaps I can add a guide to the RABL wiki
+라고 나왔다. 한번 시도해보자.
+
+api 컨트롤러 코드에 아래와 같은 코드로 성공을 했다.
+respond_to :json
+
+	def index
+		@tasks = Task.all
+		render "tasks/index"
+	end
+
+api 네임스페이스를 적용했기때문에 이제 기존의 index, tasks.json 을 지워보자.
+rendering 을 트리구조 폴더로 하기 때문에 tasks 레이아웃 폴더 아래에 v1 폴더를 생성해서
+만들수 있다. 이로써 tasks.json 을 지워도 api/v1/tasks.json으로 api를 유지할 수 있게되었다.
+
+created_at 을 day 로 커스터마이징 해보자.
+
+collection @tasks, root: "tasks"
+attributes :id, :name, :description, :status, :created_at => :day
+이런식으로 적용을 해보려고 했는데,
+
+Named and aliased attributes can not be combined on the same line. This currently does not work:
+attributes :foo, :bar => :baz # throws exception
+
+안된다고 나와있다.
+collection @tasks, root: "tasks"
+attributes :id, :name, :description, :status
+attributes created_at: :day
+
+api version 을 마저 완성하자.
+ApiConstraints 를 적용하기 전에 바뀐 url로 안드로이드로 테스트를 해보자.
+ApiConstraints 를 적용하기 전인데 바뀐 url로 안드로이드가 데이터를 가져오지 못한다.
+Gson Exception 이 발생한다. null 값이 발생해서 아무 데이터도 없는듯...
+wifi가 끊겨서 못가져온거였음..
+
+이제 ApiConstraints 를 적용해보자. 
+
+ApiConstraints 적용중
+/home/kater102/.rvm/gems/ruby-1.9.3-p125@rails322/gems/actionpack-3.2.2/lib/action_dispatch/routing/route_set.rb:169:in `module_eval': /home/kater102/.rvm/gems/ruby-1.9.3-p125@rails322/gems/actionpack-3.2.2/lib/action_dispatch/routing/route_set.rb:180: syntax error, unexpected tIDENTIFIER, expecting '}' (SyntaxError)
+                result.merge(options)
+에러가 나왔다.
+라우팅코드에서 에러가 발생하는듯. 다시 살펴보자
+오타가 있었나보다. 다시 타이핑하니깐 잘 나온다.
+
+Header 에 Accept 를 세팅을 해야 적용이 되는 거 같다. 일단 현재 개발때는 Advanced REST client 를 사용하고 Nethelper 클래스에서
+Header를 커스터마이징 해야될거 같다.
+
+<======== 민수 질문 안드로이드 UI
+** 버튼 디폴트로 selected 했을때 색깔 변하는것.
+버튼에 색깔을 씌웠는데도 기본색깔이 적용되서 select했을때 색깔이 나오는거
+=========> selector 를 쓰라는 얘기밖에 없다.
+
+6. 말나온김에 자바코드에서 Header를 세팅해보자
+HttpURLConnection 의 Header 조작 코드를 찾아봐야겠다.
+upload 메서드에 바로 코드가 있엇다.
+conn.setRequestProperty("Accept", "application/vnd.batontouch.v1");
+헤더를 세팅하니 잘가져온다.
+
+doorkeeper 로 세팅하면 좋을거 같지만, 일단 지금은 간단한 토큰으로 세팅을 해주는게 좋을거 같다.
+doorkeeper 는 추후에 좀 더 연구를 해서 보안을 강화하자.
+지금은 #352 를 기준으로 api_key를 구성하자.
+
+간단하게 api_key 를 생성하고 (api_key 모델 생성)
+
+class ApiKey < ActiveRecord::Base
+  before_create :generate_access_token
+  
+private
+  
+  def generate_access_token
+    begin
+      self.access_token = SecureRandom.hex # 1.9 버전에서 추가된 메서드
+    end while self.class.exists?(access_token: access_token)
+  end
+end
+
+>> 컨트롤러
+
+before_filter :restrict_access
+
+def restrict_access
+  authenticate_or_request_with_http_token do |token, options|
+    ApiKey.exists?(access_token: token)
+  end
+end
+
+컨트롤러에서 위와 같이 세팅해주면
+curl http://localhost:3000/api/products -H 'Authorization: Token token="c576f0136149a2e2d9127b3901015545"'
+
+형태로 Authorization 에 헤더를 세팅해주면 된다.
+
+잘 가져온다. Global 에 버젼과 인증 헤더를 전역 변수로 저장하자.
+
+securing 까지 완료.
+
+기본 rabl 적용 및 세팅이 완료되었다.
+
+========================================
+<=== 안드로이드 activity dialog 라벨을 없애보자
+일단 기본 label 세팅을 삭제해보자. AndroidManifest.xml
+requestWindowFeature(Window.FEATURE_NO_TITLE);
+로 시도해보자
+
+에러가 난다.
+
+순서가 잘못된거 같다. 한번 다시 검색해보고 살펴보자.
+위치를 바꾸고 Setcontentview 위로 다시 시도.
+===> 완료
+
+
+
+=========================================
+자 이제 딜 모듈을 장착해보자.
+
+먼저 batonshowactivity 에서 버튼을 누르면 나온다. 
+일단 키보드가 나오는 EditText 부분 처리.
+아이디값도 변경하자.
+그 다음 버튼에 클릭 리스너를 장착해서 처리하자.
+
+xml 에 onClick="SuggestButtonClick" 등록
+public void SuggestButtonClick(View v){}
+위의 메서드로 클릭 리스너를 등록할 수 있다.
+처리되었다.
+
+show.json.rabl 을 구성해서 아이템들을 받아오자.
+https://github.com/nesquena/rabl
+현재 받아와야하는 건 딜 이름, 경유지, 도착지, 자세사항, 연락날짜, 마감날짜이다.
+
+현재 show.json.rabl 페이지를 만들었는데 아무것도 받아오지 못하고 있다. => attributes 를 선언안해줘서 나오지 않는 거엿음
+
+오류는 없는데 리스트 아이템을 클릭하면 똑같은 first a Task만 가져온다. 아이디 2만 가져오는듯.
+어댑터의 클릭리스너를 잘 살펴보자.
+태스크를 하나 더 추가해서 다시 살펴보자.
+
+어댑터에 클릭 리스너를 추가하면 가장 최근 task 의 id를 가져와서 호출하게 된다. 포지션을 가져와볼까?
+어댑터 클릭 리스너에서 position 을 호출하려니 final로 바뀐다. 흠..
+http://stackoverflow.com/questions/10204071/arrayadapter-getview-argument-variable-changed-to-final
+
+final로 바뀌는건 문제가 없다고 한다. 그럼 Task를 여러개 만들어서 포지션을 불러보자.
+포지션을 잘불러오는데.. 카미나리로 페이지네이션을 적용해서 다시 포지션을 불러보자.
+
+
+<********
+ 작업일지 쓰면서 피드백 받는 거 꽤 괜찮은 방법인거 같다. 여기서 부터 시작해서 테스트 개발에 적응해나가자.
+ 이걸 쓰기 위한 웹플랫폼이 따로 있으면 훨씬 좋을 거 같다. 한번 구상해보자.
+ 아이폰 3g 로 연결하니 인터넷이 느리다..
+********>
+
+kaminari 간단히 적용해보자.
+https://github.com/amatsuda/kaminari
+http://railscasts.com/episodes/254-pagination-with-kaminari?view=asciicast
+그 후에 안드로이드에서 endless scroll 을 적용하면 될듯.
+
+일단 카미나리 기본코드
+@tasks = Task.page(params[:page]).per(5)
+스터디움 코드를 확인하고 적용을 해보자. 정렬까지 적용해보자. * 현재 index 정렬은 긴급도 순으로 하기로 되어있다.
+
+<****
+ sublime sort tab 플러그인 설치
+https://github.com/bizoo/SortTabs
+ 탭들을 정렬해주는 플러그인이었음.
+***>
+
+http://172.20.10.3:3000/api/tasks.json?page=1
+모델에 paginates_per 5
+
+position 을 잘가져오나 position 을 기준으로 했을때는 id 값이 연속하지 않을때 에러가 발생한다.
+onClick 메서드에서 다시 get position 을 해서 task 를 가져오니 task 아이디를 잘 가져온다.
+연속되는 아이디들을 지워서 다시 테스트해보자.
+해당 task_id 를 잘가져온다.
+
+완성되었고 이제 Show Activity 로 넘어가보자.
+
+TextView 를 선언하고 setText로 값들을 받아보자. Show에서 Gson을 사용해서 받는다.
+이름빼고 널값이 많기때문에 일단은 이름만 세팅.
+
+잘 가져온다.
+
+딜을 하려면 클라이언트가 일을 제안을 한다.
+이때 tradestat 모델이 create 되면서 생성된다. 콘솔에 테스트를 하고 해당 컨트롤러 메서드를
+작성해보자
+
+tradestat 이 살짝 변형되었다. 다시 db를 마이그레이션해보자.
+
+@client.tradestats.create!(task_id:@task.id)
+
+db 를 리마이그레션 하고 위와같이 콘솔에 입력하니 에러가 난다. tradestats NilClass..
+유저 클래스를 다시 살펴봐야겠다.
+@client 에 유저 객체를 할당안해서 생긴에러.
+그러나 생성할때 user_id 가 없어서 에러가 난다고 나온다.
+railstutorial 에 소스 키를 다시 참고해보자.
+
+has_many :tradestats, foreign_key: "client_id"
+
+tradestat 모델이 belongs_to :client, class_name: "User", foreign_key: "client_id"
+client_id 키값을 참조하기 때문에 
+외래키를 등록.
+
+에러없이 tradestat 객체를 잘 생성한다.
+
+그런데 어떤방식으로 하면 RESTful 하게 구현이 될까?
+일단 이중 Resource 로 해보자.
+
+현재 유저의 정보도 가져와야된다.
+하지만 이렇게 할려면 로그인 메서드도 api versioning 을 해야된다.
+
+일단 현재 유저의 정보없이 Tradestat create 메서드를 작성해보자.
+
+현재 tradestats를 생성하는 라우팅주소는 /api/tasks/:task_id/tradestats POST 메서드로 동작한다.
+그런데 현재 아무 반응이 없다. nested 될때 라우팅 주소를 살펴보자. 레일스가이드.
+
+제대로 맞게 한거 같은데, Template 이 없다고 나온다. 문제가 뭘까..
+
+index 를 작성해보자. index 는 잘 가져온다.
+
+render 앞부분에 "tradestats/v1/show" 입력하니 잘 작동한다.
+Tradestat.new(task_id: params[:task]) 이렇게 입력했을때는 Task 아이디가 생성되지 않는다.
+
+스터디움 코드를 확인해보자.
+
+@tradestat = Tradestat.new(task_id: params[:task_id]) task_id 로 키값을 바꿔주면 Task 아이디를 할당한다.
+잘 생성되는 것을 확인할 수 있다.
+
+respond_to :json 으로 컨트롤러에 선언하면 무조건 rendering 되는 json 정보가 있어야된다. 없으면 Template missing 에러가 난다.
+
+def destroy
+	@tradestat = Tradestat.find(params[:id])
+	@tradestat.destroy
+	render head :no_content
+end
+
+위와 같이 destroy 메서드를 선언하니 
+
+AbstractController::DoubleRenderError in Api::V1::TradestatsController#destroy
+
+더블 렌더 에러가 난다.
+Render and/or redirect were called multiple times in this action. Please note that you may only call render OR redirect, and at most once per action. Also note that neither redirect nor render terminate execution of the action, so if you want to exit an action after redirecting, you need to do something like "redirect_to(...) and return".
+
+Delete가 된 후에 렌더링 오류가 발생.
+
+def destroy
+	@tradestat = Tradestat.find(params[:id])
+	@tradestat.destroy
+	render json: {response:"destroy_success"}
+end
+
+마찬가지로 json 값을 설정해주면 에러가 없어진다. 
+
+<=== Deal 로직 정리
+
+이제 tradestats 를 생성했기 때문에 클라이언트들이 유저가 이를 select 하는 action이 필요하다.
+
+선택된 클라이언트의 tradestat 의 status가 true로 변경되고
+@tradestat.update_attributes(status:true)
+task 의 상태가 업데이트 된다. 진행중으로.
+@task.update_attributes(status:1)
+이때 선택된 클라이언트에겐 일을 진행하라는 푸시메시지가, 나머지에겐 일이 불발됬다는 푸시메시지가 가야된다.
+
+그리고 이 시점부터 일이 취소가 되거나 문제가 생기면 만료처리가 된다. -1 그전엔 그냥 삭제.
+
+클라이언트는 일을 진행을 하고 일이 완료가 되면 일이 완료되었다는 버튼과 리뷰를 작성할 수 있다.
+일이 완료가 되면 유저는 일을 확인하고 완료버튼 또는 취소 버튼을 누를 수 있다. 
+
