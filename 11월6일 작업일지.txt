@@ -52,6 +52,179 @@ comment[body]의 형태로 전송된다.
 =====================>
 하다보니 status 분기가 더 필요한듯.
 
+Deal 모듈 컨트롤러를 설계했으니 다시 회원가입 모듈을 api versioning 을 적용시켜보자.
+
+devise 의 기본 설정을 살펴보자.
+
+http://jessewolgamott.com/blog/2012/01/19/the-one-with-a-json-api-login-using-devise/
+
+devise 를 사용한 JSON api 인증 로직 관련해서 좋은 글을 찾은 거 같다. 정독해보자.
+
+branch 를 발생시켜서 테스트 해보자.
+
+루비 관련 사이트를 찾다가 몇개의 사이트 발견
+https://cooperpress.com/rubyreloaded
+
+<========== 갑자기 궁금해서 찾은 Lorem ipsum ..
+요약
+Microsoft Word 온라인 도움말에 나타나는 "Lorem ipsum dolor sit amet consectetuer"라는 문구는 현학적인 라틴어 격언처럼 보이지만 사실상 특별한 의미를 갖지 않습니다.
+위로 가기 | 피드백 보내기
+추가 정보
+비록 아무 의미가 없는 문구이기는 하지만 여기에는 긴 역사적 배경이 있습니다. 이 문구는 인쇄 기술자들이 활자가 지닌 고유한 특징을 확인하기 위해 수세기 동안 사용해 온 것입니다. 이 문구에는 다양한 문자가 섞여 있을 뿐 아니라 이러한 문자의 조합에서는 글자의 간격이 잘 드러나므로 글꼴의 두께와 디자인을 비롯한 활자의 기타 중요한 특징을 확인하는 데 매우 적합했습니다. 
+
+1994년에 발행된 "Before & After" 매거진에 따르면 "Lorem ipsum ..." 문구는 B.C. 45년에 라틴어로 쓰여진 키케로의 윤리학 저서인 최고 선악론(de Finibus Bonorum et Malorum)에서 발췌한 문장을 뒤섞어 놓은 것이라고 합니다. "Lorem ipsum ..."이라는 문구는 "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."라는 문장에서 따온 것으로 이 문장은 "고통 그 자체를 즐기는 자도, 이를 쫓는 자도, 이를 원하는 자도 없다. 왜냐하면 고통은 고통스러울 뿐이기 때문이다."라는 의미를 지니고 있습니다. 
+
+1500년대, 한 인쇄 업자가 활자 샘플 페이지의 질을 높이기 위해 키케로의 문구를 채택했고 그로부터 지금까지 이 라틴어 모양의 텍스트가 인쇄 업계에서 표준으로 사용하는 샘플 텍스트로 자리잡은 것입니다. 전자 출판 시대 이전의 그래픽 디자이너들은 텍스트를 나타내는 구불구불한 선을 사용해 레이아웃 견본을 만들어야 했습니다. 그러나 "Lorem ipsum" 문구가 인쇄된 접착 시트의 출현으로 디자이너들은 텍스트가 페이지의 어느 부분에 위치하는지 보다 잘 알 수 있게 되었습니다.
+==========> 라틴어였음.
+
+
+curl -v -H 'Accept: application/vnd.batontouch.v1' -X POST http://localhost:3000/api/users/login -d '{"user" : { "email" : "foobar@foobar.com", "password" : "foobar"}}'
+
+현재 서버에는 잘 요청이 가는데, Unathorized 가 뜬다.
+unathorized 가 되는
+
+curl -v -H 'Content-type: application/json' -H 'Accept: application/json' -X POST http://127.0.0.1:3000/users/login -d '{"user" : { "email" : "foobar@foobar.com", "password" : "foobar"}}'
+
+/users/login 으로 했을때는 제대로 뜬다.
+
+api versioning을 했을때는 왜 안될까?.. 컨트롤러를 똑같이 구현해보자.
+컨트롤러는 상관이 없다.
+
+http://stackoverflow.com/questions/4857855/extending-devise-sessionscontroller-to-authenticate-using-json
+
+Token token="5d94cdef32e1fbc2a83fb4ed78cccead"
+된다...
+
+기존에 생성한 namespace 로 라우팅을 하면 에러가 났는데 위 링크를 참고해서
+namespace :api, defaults: {format: 'json'} do
+    scope module: :v1, constraints: ApiConstraints.new(version: 1, default: :true) do
+      resources :tasks do
+        resources :tradestats, only: [:create, :destroy, :update]
+      end     
+
+      devise_scope :user do
+        resources :sessions, only: [:create, :destroy]
+      end
+    end
+  end
+
+devise의 scope을 새로 만들었다.
+api/sessions 로 잘 만들어내는거 같다.
+
+registration 과  check_mobile_login 부분을 손보자.
+
+** 인증부분에서 warden 부분을 다시 공부해봐야할거 같다.
+** 아직 devise 의 원리가 이해가 되지 않는다.
+** 인증 로직을 다시 공부해보자.
+
+registration 등록을 했으나, 에러가 난다.
+
+post "/users" => "devise/registrations#create"
+
+컨트롤러가 없어서 그런거 같은데 오버라이딩을 해보자. 그 전에 일단 devise_for :users를
+scope 안에 등록해서 살펴보자.
+
+uninitialized constant Api::V1::RegistrationsController
+
+에러가 난다.
+
+관련해서 구글링중 최근에 씌여진 안드로이드 - Rails 인증 파트 포스트를 발견했다.
+http://lucatironi.github.com/tutorial/2012/10/15/ruby_rails_android_app_authentication_devise_tutorial_part_one/
+http://lucatironi.github.com/tutorial/2012/10/16/ruby_rails_android_app_authentication_devise_tutorial_part_two/
+
+
+post 'registrations' => 'registrations#create' 커스터마이징 하고
+
+api/vi/registrations_controller.rb 파일 생성.
+
+class Api::V1::RegistrationsController < Devise::RegistrationsController
+  skip_before_filter :verify_authenticity_token,
+                     :if => Proc.new { |c| c.request.format == 'application/json' }
+
+  respond_to :json
+
+  def create
+    build_resource
+    # resource.skip_confirmation!
+    if resource.save
+      sign_in resource
+      render :status => 201,
+           :json => { :success => true,
+                      :info => "Registered",
+                      :data => { :user => resource,
+                                 :auth_token => current_user.authentication_token } }
+    else
+      render :status => :unprocessable_entity,
+             :json => { :success => false,
+                        :info => resource.errors,
+                        :data => {} }
+    end
+  end
+end
+
+===========================================================================================
+
+users => registrations 컨트롤러 완성
+
+이제 check_mobile_login 을 처리해보자.
+
+main 컨트롤러를 그대로 v1 폴더로 옮기고 
+match "/check_mobile_login", to: 'main#check_mobile_login' # check_mobile_login(Facebook)
+를 커스터마이징해보자.
+
+레일스가이드에서 다시 라우팅을 살펴보자
+
+match method 를 쓸때 via 로 HTTP method 를 선택할 수 있다.
+match "/check_mobile_login", to: 'main#check_mobile_login', via: :post
+Task 와 Tradestat 모델의 create method 를 설정
+
+안드로이드 코드를 전부 정리하고 딜 모듈을 다시 개발하자.
+
+take a rest.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
