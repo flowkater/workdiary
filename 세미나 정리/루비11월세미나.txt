@@ -51,7 +51,7 @@ Nginx - socket - unicorn 	=> Pulling 방식
 
 ## 유니콘 서버의 원리 90%
 
-require 'socket'     
+require 'socket'
 server = TCPServer.new(9000) # 9000 port
 3.times do # 유니콘처럼 프로세스 3개 생성
   fork do

@@ -1,0 +1,44 @@
+11월 9일 작업일지(금)
+
+BatonManageAdapter 에서 해당 Task 의 task_id 를 불러서 전달한다.
+넘어온 인텐트에서 해당 정보를 AsyncTask를 불러온다. BatonShowActivity 와 비슷한 구성.
+
+레이아웃 xml 파일명은 batonmanage_managetasks.xml 이다.
+
+받아왔는데 죽었다. Null Pointer 서버에서 어떻게 전송되었는지 확인해보자.
+서버 문제보다 헤더뷰이기때문에 헤더뷰에서 findviewbyid 를 통해서 구성을 해야될 것 같다.
+
+tvName = (TextView) linear.findViewById(R.id.name);
+
+다시 Try.
+
+<** AsyncTask 를 반복해서 쓰는 경우가 많은데 이것들을 라이브러리화하는게 좋을거 같다 **>
+
+ListView 를 세팅해주지 않으니 아무것도 나오지 않는다. adapter 를 장착시키고 다시 컴파일.
+일단 이름만 가져오게 했는데 이상없이 잘 가져온다.
+
+featured_adapter_footer 를 통해서 클라이언트를 가져오도록 하자.
+조금 정리가 안되니 한번 정리를 하고 넘어갈 필요가 있을것 같다. 지난 작업일지에서 딜 모듈 프로세스에
+대해서 한번 짚어보고 다시 해보자.
+
+
+===================================================
+상태가 1이 되기전에 biding 이 되는 상태.
+선택이 완료되면 1이 되고 진행중인 상태가 보인다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
