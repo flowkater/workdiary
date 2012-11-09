@@ -1,0 +1,75 @@
+야크쉐이빙 - 황대산님
+해킹
+ - 폰프리킹 시스템을 온전히 이해한 후, 메뉴얼에 설명되어 있지 않은 방식으로 시스템을 활용하는것.조잉그레시아주니어
+ - 책.케이티시에라(HeadFirst Java 저자?). O'relly. 
+ *추상계층
+  - 추상계층은 인터페이스와 구현 코드를 분리.
+  - 프로그래머들이 elegant 한 interface만 사용할 수 있도록.
+  -> 백조, 다리는 계속 움직인다. 추상계층의 우아함에 멈추지말고 그 밑으로..
+
+해킹의 3단계
+1. 추상계층대로 사고하고 코딩한다.
+2. 추상계층 아래서 사고하고, 추상계층 위에서 코딩한다. (위자드?)
+3. 추상계층을 새로 만든다.
+
+**추상계층은 시스템의 '온전한 이해'를 가로막는 장애물이다.
+
+해킹 = 시스템 온전히 이해
+추상계층 = 장애물
+야크쉐이빙 = 문제를 해결하는 재귀적인 과정
+
+
+Great Software 를 만드는 과정은 YAK SHAVING!
+
+UNIX : 야크 쉐이빙의 결과물이다.
+ MULTICS 프로젝트
+ 켄 톰슨(벨 연구소), 데니스 리치(C언어 개발자)
+ - Space Travel 게임. BCPL(MULTICS) -> 포트란(GE-635)
+
+Tex(8년..) : 도날드 크누스, MS-DOS(컴퓨터키트의 하드웨어회사가 개발), EMACS : 리처드 스톨만...(TECO)
+
+
+Ruby on Rails
+"FASTCGI" 에서 "UNICORN" 까지
+
+FASTCGI -> MONGREL -> THIN -> UNICORN (웹서버)
+
+CGI 의 문제점. HTTP 요청때마다 프로세스 생성.(메모리 로드 매번)
+FASTCGI : 웹어플리케이션 전체를 메모리에 미리 로드.
+
+Zed Shaw - Mongrel 을 개발. but 업로드할때 프로세스 누적 현상, 레일스 커뮤니티를 떠남
+Marc-andre Cournoyer - Thin 을 개발. 이벤트 기반의 웹 서버. 병렬처리. 파일 업로드 병목현상 처리. but 느린 프로세스 뒤에 Http 요청이 누적되는 문제는 여전.
+
+Eric Wong - Unicorn 개발. 
+
+야크쉐이빙 tip - 남들이 안쓰는 소프트웨어를 사용하라. 
+
+	       - unicorn
+Nginx - socket - unicorn 	=> Pulling 방식
+	       - unicorn
+
+
+## 유니콘 서버의 원리 90%
+
+require 'socket'     
+server = TCPServer.new(9000) # 9000 port
+3.times do # 유니콘처럼 프로세스 3개 생성
+  fork do
+   loop do
+      connection = server.accept
+      connection.puts "hello"
+      sleep(15)
+      connection.puts "bye bye~~"    
+      connection.close
+    end
+  end
+end
+
+Process.waitall # 자식프로세스가 끝날때까지 기다려라.
+
+$>nc localhost 9000 로 테스트 가능
+(netcat)
+
+	야크 쉐이빙은 즐겁다.
+	해킹 잘하려면 야크 쉐이빙을 잘해야 한다.
+	어쩌면 야크 쉐이빙은 멋진 소프트웨어를 만드는 유일한 방법일지도 모른다.

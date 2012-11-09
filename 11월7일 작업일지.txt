@@ -1,0 +1,64 @@
+11월 7일 작업일지 == 일산
+오늘 일정 법무사, 세무사님, 그리고 인크루트의 이광석 대표님을 만나기로 함.
+현재 오전에 리스트뷰와 어댑터 작업을 하는게 좋을듯 싶다.
+
+ManageBaton 패키지의 리스트들을 정리하고 이하 딜 모듈을 완성시키면 될듯.
+초반에 기프티콘 모듈,중간에 리뷰모듈이 필요하다.
+
+현재 작업하는 패키지 (안드로이드)
+com.batontouch.managebaton
+MyBatonManageAdapter.java
+
+BatonIndex에서 작업을 했던 MyListAdapter2.java 를 보고 수정을 하자.
+
+ViewHolder가 기본적으로 필요로 하다.
+ViewHolder에 관한 상세내용은 추후 업데이트하자.
+
+관리 페이지에서 들어가는 row 의 요소들을 확인해서 ViewHolder를 만들자.
+featured_adapter2.xml
+
+이름들이 헷갈린다.
+
+convertView = mInflater.inflate(mResource, parent, false);
+inflate(resource, root, attachToRoot)
+convertView = mInflater.inflate(mResource, null);
+inflate(resource, root)
+의 차이점은 무엇일까.
+
+
+1. 어댑터 처리됬다. MyBatonManageAdapter.java
+
+==========================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
