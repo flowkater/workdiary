@@ -1,0 +1,54 @@
+If you are new to Ruby and want to explore this super cool language, here is a list of resources you should check out that might prove useful. This includes free online learning resources, as well as paid text books.
+ 
+Note: Please add new resources in alphatical order.
+ 
+FREE ONLINE RESOURCES
+Codecademy - http://www.codecademy.com/tracks/ruby
+Data Structures in Ruby : http://www.brpreiss.com/books/opus8/
+First Edition Programming Ruby: Pragmatic Programmer's Guide  - http://www.rubycentral.com/pickaxe/
+Hackety Hack - http://hackety.com/
+LearnStreet - http://www.learnstreet.com/lessons/study/ruby
+Learn Ruby The Hard Way - http://ruby.learncodethehardway.org/book/
+Nettuts+ Ruby for Newbies Sessions - http://net.tutsplus.com/sessions/ruby-for-newbies/
+New Boston Videos - http://thenewboston.org/list.php?cat=50
+ShowMeDo Ruby Videos, Tutorials & Screencasts - http://showmedo.com/videotutorials/ruby
+StackOverflow Ruby - http://stackoverflow.com/questions/tagged/ruby    Try Ruby - http://tryruby.org
+MacRuby - http://macruby.org/
+O'Reilly Net Ruby (Last post in 2008) - http://oreillynet.com/ruby/
+RubyGems - http://rubygems.org/
+RubyMotion (Ruby for iOS Programming) - http://www.rubymotion.com/
+Ruby Conference Videos - http://confreaks.com/events
+Ruby Documentation - http://www.ruby-lang.org/en/ and http://ruby-doc.org/
+Ruby Koans - http://koans.heroku.com/
+Ruby Forum - http://www.ruby-forum.com/
+Ruby Monk ? http://rubymonk.com/
+** Ruby Notes - http://rubylearning.com/satishtalim/tutorial.html
+Ruby Online Quiz/ Exam - http://rexaminator.com/
+Ruby Regex ? http://rubular.com/
+Ruby Study Hall - http://www.rubystudyhall.com/ (June 9, 2012)
+Ruby Quiz - http://rubyquiz.com/
+Why's Guide to Ruby - http://mislav.uniqpath.com/poignant-guide/
+ 
+TEXT BOOKS
+Eloquent Ruby (Addison-Wesley), Russ Olsen - http://eloquentruby.com/
+Programming Ruby (Pragmatic Bookshelf), Dave Thomas, Chad Fowler, Andy Hunt - http://pragprog.com/book/ruby3/programming-ruby-1-9
+The Ruby Programming Language (O'Reilly), Yukihiro Matsumoto, David Flanagan - http://shop.oreilly.com/product/9780596516178.do
+ 
+DEVELOPMENT TOOLS
+GNU Emacs (Text Editor, OS independent) - http://www.gnu.org/software/emacs/
+Komodo (IDE, OS independent) - http://www.activestate.com/komodo-ide
+Notepad++ (Text Editor, Windows) - http://notepad-plus-plus.org/
+Pry (IRB Replacement/REPL, Unix) - http://pryrepl.org/
+RDE (IDE, Windows) - http://homepage2.nifty.com/sakazuki/rde_en/index.html
+RubyMine (IDE, OS Independent) - http://www.jetbrains.com/ruby/
+RubyInstaller (Windows) - http://rubyinstaller.org/
+Sublime Text 2 (Text Editor, OS independent) - http://www.sublimetext.com/2
+TextMate (Text Editor, Mac OS X) - https://github.com/textmate/textmate
+Vim (Text Editor, OS independent) - http://www.vim.org/
+ 
+REFERENCES
+http://rubyfanboy.tumblr.com/post/27974525043/ruby-online-resources
+ 
+And of course...
+** COURSES at RubyLearning
+http://rubylearning.org
