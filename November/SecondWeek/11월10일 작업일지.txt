@@ -1,7 +1,67 @@
 11월 10일 작업일지.
 
-<== FlowChart 를 다 정리.
+<== FlowChart with Team
+
 1. 제안하기에서 제안하기가 되면 reloading 되서 보여준다.
+2. 프로필 탭 문제(밖으로 빼냐..)
+3. 로그인 액티비티. 환경설정에 물리적으로 위치. 프로필에서도 로그인.(중복되서 보여줌)
+ - 탭은 유지. 
+  프로필 페이지에서 어디까지 액션. 다 넣고. 더보기에는 더보기 옵션만.
+4. 설정은 카카오톡처럼.
+
+FlowChart ==>
+
+플로우차트를 전체적으로 맞추었다.
+
+
+===========================================
+git merge
+
+Setting_PushArea.java
+Task.java
+BatonManageActivity.java
+MainActivity.java
+Logout_Dialog.java
+BatonIndexActivity.java
+batonmanage.xml
+batonindex.xml
+activity_main.xml
+AndroidManifest.xml
+
+다 Merge
+============================================
+오늘 안드로이드 클라이언트를 모두 완성하자.
+
+다이얼로그
+http://www.androidside.com/bbs/board.php?bo_table=B46&wr_id=11473
+
+============================================
+
+Manage 에서 Listview 를 하나로 통합해서 가져왔다.
+btnStatus 를 가지고 BatonManageBtnClick 으로 전환. But, 유저는 초반에 내가 시킨 일 리스트뷰만 불러오는데,
+현재 clientStatus = false; 로 하고 View.GONE 했는데 사라지지 않는다.
+
+LinearLayout 이 감싸고 있기때문에 LinearLayout 으로 View.GONE....
+
+Child root 
+config.include_child_root = false
+
+버튼이 올라가는 것이 문제. 일단 다이얼로그 이벤트가 발생하는지 처리해보자.
+어댑터 getView 에서 holder 에 Button을 생성해서 ClickListener 처리.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
