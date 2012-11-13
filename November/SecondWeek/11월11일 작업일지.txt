@@ -1,0 +1,23 @@
+11월 11일 작업일지
+
+1. 딜모듈을 완성하자.
+
+select 서버모듈 완성.
+selectclient PUT Method.
+
+tradestat_id 에 해당되는 id를 넘기기
+
+select 모듈 완성
+
+Show에서 해당 Task Clients 받아오기
+
+child @task.clients => :users do
+	attributes :id, :name
+	node(:tradestat_id) { |user| user.task_tradestat(@task.id)}
+end
+
+rabl 에서 node 를 사용할때 {|user| } explicit 해줘야된다.
+
+
+
+

@@ -1,0 +1,60 @@
+﻿11월 22일 월요일
+오늘 클라이언트 xml, activity 모두 개발완료.
+서버 delayed job 완료해서 푸시도 보내서 완성하자.
+Observer 옵져버부터 공부하자.
+===================
+ :옵져버
+ http://rorlab.org/categories/3/posts/39
+Observer Callback
+모델과 직접적인 관계가 없는 코드로 콜백을 호출할 때마다 대신에 옵져버를 만드는 것 고려.
+ex) 등록 화인 이메일을 보내는 코드를 포함해서는 안된다는 것에 대한 논란.
+$ rails generate observer User
+class UserObserver < ActiveRecord::Observer
+	def	after_create(model)
+		# code to send confirmation email...
+	end
+end
+
+config.activer_record.observer = :user_observer
+
+class MailerObserver < ActiverRecord::Obeserver
+	observe :registration, :user # 옵져버 공유하기
+	def	after_create(model)
+	 # code
+	end
+end
+
+transaction callback
+after_commit, after_rollback
+
+===========================
+<== Deal Module xml 정리. (with june, minsu)
+
+Client 가 볼때 task 
+batonmanage_managetasks_clientpage_progress.xml
+
+User 가 볼때 task
+batonmanage_managetasks_progress.xml
+
+# clientpage 에서 전화걸기, 문자하기는 select_client action 이후에 활성화.
+# clientpage 는 user - client 양쪽 Profile page에 해당한다.
+ 
+만료 시간까지 남은 시간 : hh mm 몇시간 몇분?
+def rest_time
+	enddate > day
+	 p dd
+	enddate < day
+	 p hh
+	enddate < hour
+	 p mm
+end
+# calldate 도 마찬가지..
+내가 줄 기프티콘 #사진
+
+batonmanage_managetasks_progress.xml # View.GONE
+
+==>
+진행중일때 User가 보는 Baton Show Activity 생성.
+batonmanage_managetasks_progress.xml
+
+
