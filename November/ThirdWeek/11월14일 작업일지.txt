@@ -1,0 +1,38 @@
+11월 14일 작업일지.
+Cookie 와 Giftcon 정보를 통해서 딜 모듈을 완성하자.
+
+1. Task 가 create 될 때, 
+
+첫번째, giftcon을 선택할 때, giftcon 의 가격과 유저의 가격을 체킹.
+def cookie_checking
+	@user_cookie = @user.cookie
+	@task_cookie = @task.cookie
+
+	if @user_cookie >= @giftcon.price
+		@user_cookie.cookie - @giftcon.price
+		@task_cookie.cookie + @giftcon.price
+		@user.save
+		@task.save
+	else @user_cookie < @giftcon.price
+		false
+end
+
+def	cookie_to_task(price)
+	cookie - price
+	save!
+end
+
+<**** Facebook Error -> 패키지명이 바껴서 에러.
+	BatonTouchMe is misconfigured for Facebook login.
+	Press Okay to go back to the application without connecting it to Facebook.
+****>
+
+t.decimal 에서 defult 0 으로 해서 레코드에러가 낫따.  실수하지 말자.
+
+
+
+
+
+
+
+

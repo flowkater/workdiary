@@ -104,5 +104,86 @@ So, in Method call Mathod name is changed.
 => http://127.0.0.1:3000/api/users/user_current?auth_token=MzBp9tGyJaxpadk6p5qt
 현재 유저의 정보를 가져오는 api 주소.
 ==========================================================================
+setVisibility
+prevButton = (Button) findViewById(R.id.button_prev);        
+nextButton = (Button) findViewById(R.id.button_next);        
+actionButton = (Button) findViewById(R.id.launch_action);
 
+launchActivity.setOnClickListener(new View.OnClickListener() {
+ public void onClick(View v) {
+   if (buttonStatus == 1) {
+     buttonStatus = 0;
+     prevButton.setVisibility(View.GONE);
+  }
+  else {
+    buttonStatus = 1;
+    prevButton.setVisibility(View.INVISIBLE);
+  }
+ }
+});
+==========================================================================
+1. 딜 Create 모듈 완성 (기프티콘 포함)
+2. 딜 진행중 status 후 완료 및 리뷰쓰는 모듈 완성.
 
+client 에서 안보이는 것들은 먼저 Gone 처리 해주고 나오면 Visible 처리를 해주자.
+{
+"id": 1,
+"name": "name 1",
+"fromloc": "fromloc 1",
+"toloc": "toloc 1",
+"description": "description 1",
+"status": 1,
+"calldate": null,
+"enddate": null,
+"current_user": true,
+"client_status": false,
+"user": {
+"id": 1,
+"name": "수지"
+},-
+"reviews": [(0)],
+"client": nul==
+
+// 대기중일때, auth_client true 일때, current_user 가 아닐때, 이 태스크에서 비딩을 걸수있따.
+if (status == 0 && auth_client && !current_user) {
+	suggestBtn.setVisibility(View.VISIBLE);
+}
+
+Logout 구현
+http://arabiannight.tistory.com/entry/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9CAndroid-SharedPreferences-%EC%82%AC%EC%9A%A9-%EC%98%88%EC%A0%9C
+
+// 값(ALL Data) 삭제하기
+    private void removeAllPreferences(){
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.clear();
+        editor.commit();
+    }
+
+DialogProgress Global 이 안된다.
+
+BatonManageAdapter 에서 Status 구분
+Intent 를 통해서 똑같이 반복되는 코드가 많다. 메서드로 통합을 시키자.
+
+완료 status ==
+
+*RatingBar 
+xml.
+numStars 만점인 별의 개수.
+stepSize 속성 : 별점의 조정 단위
+isIndicator : 별점을 단순히 표시만 할 것인지를 지정. (읽기 속성, 디폴트는 false)
+ - ratingBarStyleIndicator, ratingBarStyleSmall
+OnRatingBachangeListener Interface 의 onRatingChanged 리스너가 호출. 여기서 변경된 별점을 읽어 처리.
+but, 필요할 때 getRating() 메소드로 최종 결정된 별점을 읽기만 하면 된다.
+
+치명적인 버그 발견.
+하나의 어댑터에서 check 를 할 경우. 문제가 생긴다.
+즉, client_status : true 를 가지고 있는 유저가 자신의 일을 하게 되면, 문제가 생긴다.
+
+<** 굿닥 임대표님
+Social Graph , Wall 에 Posting, 친구 초대.
+**>
+
+<=== 강석흔 이사님
+투자 고려중. 열심히 해보자.
+===>
