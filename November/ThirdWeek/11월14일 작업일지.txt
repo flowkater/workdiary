@@ -10,7 +10,8 @@ def cookie_checking
 
 	if @user_cookie >= @giftcon.price
 		@user_cookie.cookie - @giftcon.price
-		@task_cookie.cookie + @giftcon.price
+		@task_cookie.cookie 
++ @giftcon.price
 		@user.save
 		@task.save
 	else @user_cookie < @giftcon.price
@@ -27,7 +28,7 @@ end
 	Press Okay to go back to the application without connecting it to Facebook.
 ****>
 
-t.decimal 에서 defult 0 으로 해서 레코드에러가 낫따.  실수하지 말자.
+t.decimal 에서 default 0 으로 해서 레코드에러가 낫따.  실수하지 말자.
 
 
 
@@ -36,3 +37,11 @@ t.decimal 에서 defult 0 으로 해서 레코드에러가 낫따.  실수하지 말자.
 
 
 
+<****
+ 오늘 쿠키, 기프티콘 모듈을 완성할려고 했는데 하지 못했다. 이유가 뭘까?
+일단 컨트롤러에서 세 개의 객체의 상태를 변화시키는 법에 대해 일단 몰랐고, 자본금, 자금 문제 떄문에 정신적으로 힘들었던 것 같다.
+이리저리 힘든 하루였다.
+내일까지는 어떻게든 마무리해야되는데, 제대로 하지 못하고 있는 거 같애서 너무 아쉽고..
+안드로이드 코드도 다시 뜯어고쳐야되는데 여러가지 문제가 많이 발생할거 같다. 후우..
+아마존 서버도 올려야되고.. 구글플레이스토어에 앱도 올려야되고.. 정리가 안되는데 일단 하는데까지 해보자.
+***>

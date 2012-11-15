@@ -1,0 +1,11 @@
+11월 15일 작업일지
+현재 문제는 post action 에서 현재 만들어진 user save action이 발생하지 않는다는 것이다.
+giftcon 모델의 생성을 제외하고 유저의 state 변화를 살펴보자.
+여전히 유저 모델은 반응을 안한다. put action 으로 살펴보자.
+여전히 유저 모델은 반응하지 않고 task 에서만 create action 이 발생한다. save method 를 통하지 않았음에도..
+
+accepts_nested_attributes_for 에 대해서 알아보자.
+
+deploy
+https://medrails.wordpress.com/2012/04/10/ubuntu-nginx-unicorn-capistrano/
+https://medrails.wordpress.com/2012/04/04/capistrano-%EC%B2%98%EC%9D%8C%EB%B6%80%ED%84%B0/#comment-24
