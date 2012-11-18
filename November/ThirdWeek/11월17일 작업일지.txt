@@ -1,0 +1,151 @@
+11월 17일 작업일지
+Gcm 재 구현
+1. GCM 에버노트 클립핑된 노트 복습
+2. 다시 재구현
+3. 제대로 문자열을 파싱하자.
+
+1. Google Project Key : 128292354542
+2. API Key : AIzaSyDBXuqBYA5vju-s1WNAjate4llPszHP-zU
+
+1) permission 추가
+2) MyBroadcastReceiver 부분은 직접구현된 부분.
+
+대신에 GCMBaseIntentService 를 상속받아서 사용하면 된다.
+Registration_id 를 전송하는 법을 구현.
+
+1. registration_id 를 등록받으면 서버에 해당 registration_id 를 전송
+2. id 를 통해서 메시지를 전송한다.
+registration_id 를 통해 메시지를 전송해야되나?
+일단 해당되는 메시지를 받아서 파싱 처리를 해보자.
+
+메시지는 잘 가져오는데 가져왔다 말았다. 한다..
+
+GCMBaseIntentService
+Error, Message, Registered, Unregistered..
+Message 부분에서 Intent 로 받는다.
+>require 'gcm'
+>gcm = GCM.new(api_key)
+>registration_ids= ["12", "13"] # an array of one or more client registration IDs
+>options = {data: {score: "123"}, collapse_key: "updated_score"}
+>response = gcm.send_notification(registration_ids, options)
+
+** Notification
+Notification(int icon, CharSequence tickerText, long when)
+
+icon - 상태란에 표시될 작은 그림.
+tickerText - 통지 영역에 아이콘이 처음 나타날 때 잠시 출력될 짧은 문자열
+when - 발생한 시각. System.currentTimeMillis
+ect :  number(통지 아이콘에 겹쳐서 출력될 숫자), sound, vibrate, ledARGB, ledOnMs, ledOffMs, defaults, flags
+
+DEFAULT_ SOUND - 소리 발생
+DEFAULT_VIBRATE - 진동 발생
+DEFAULT_LIGHTS - 불빛 깜박
+DEFAULT_ALL - 위 세 가지 동작 모두 수행
+
+속성 설정한 후 확장 상태란에 표시될 정보와 사용자가 통지 객체를 선택했을 때의 반응을 다음 메서드로 지정.
+>void setLatestEventInfo(Context context, CharSequence contentTitle, CharSequence contentText, PendingIntent contentIntent)
+>context - 통지를 발생시킨 주체
+>contentTitle - 제목
+>contentText - 메시지 내용 문자열
+>contentIntent - 통지 뷰를 탭햇을때 호출할 인텐트 지정
+
+>**PendingIntent 클래스는 인텐트를 래핑하며 다른 응용 프로그램으로 전달하여 실행 권한을 준다.
+PendingIntent getActivity
+PendingIntent getBroadcast
+PendingIntent getService
+
+-> intent 는 사용자가 통지 객체를 탭했을 때의 동작을 지정.(주로 activity 를 띄우는데 이 경우 인텐트에는 FLAG)ACTIVITY_NEW_TASK flag 지정)
+서비스의 경우 직접 통지를 처리 못함 -> 통지 후 사용자의 반응을 처리할 별도의 액티비티 미리 준비.
+여기까지 통지 객체가 준비되었다면 통지 관리자로 등록.
+통지 관리자는 시스템이 제공하는 서비스 -> getSystemService(NOTIFICATION_SERVICE) 로 호출
+통지 관리자의 메서드 :
+> notify(int, Notification), cancel(int), cancelAll()
+notify 메서드의 첫번째 인수는 등록할 통지 객체의 고유한 식별 번호이다.
+
+**Broadcast Receiver
+> void onReceive(Context context, Intent intent)
+방송이 수신되면 onReceive 메서드 호출.
+context 는 BR이 실행되는 컨텍스트이며 intent는 수신된 방송 내용.
+BR은 프로세스의 메인 스레드에서 실행. So, 너무 오래 시간을 끌어서는 안 되며 10초 내로 리턴.
+-> 그래서 사용자에게 전달할 내용도 대화상자를 사용할 수 없으며 통지를 대신 사용.
+
+BR은 시스템이 보내고, application은 수신만 하는 것이 일반적.
+>void sendBroadcast(Intent intent [, String receiverPermission])
+>void sendOrderedBroadcast(Intent intent, String receiverPermission)
+
+**Service
+서비스는 백그라운드에서 실행되며 사용자와 직접적인 상호작용 x
+또한 프로세스의 메인 스레드에서 실행되므로 너무 오래 시간을 끌거나 블로킹해서는 안된다.
+*Life Cycle
+- onCreate
+- onDestroy
+- onStartCommand (백그라운드 데몬일 경우)
+- onBind (원격 인터페이스 호출인 경우)
+
+==================================================================
+Intent Service 에서 notification 구현.
+
+onMessage 에서
+Thread 발생
+>	public void GET_GCM() {
+>		Thread thread = new Thread(new Runnable() {
+>			public void run() {
+>				handler.sendEmptyMessage(0);
+>				Context mcontext = getApplicationContext();
+>				Notification noti = new Notification(R.drawable.ic_launcher,
+>						gcm_msg, System.currentTimeMillis());
+>				noti.defaults |= Notification.DEFAULT_SOUND;
+>				noti.flags |= Notification.FLAG_INSISTENT;
+>
+>				Intent intent = new Intent(mcontext, MainActivity.class);
+>				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+>				PendingIntent content = PendingIntent.getActivity(mcontext, 0,
+>						intent, 0);
+>				noti.setLatestEventInfo(mcontext, gcm_msg, gcm_msg, content);
+>				mNotificationManager.notify(0, noti);
+>			}
+>		});
+>		thread.start();
+>	}
+>
+>	private Handler handler = new Handler() {
+>		public void handleMessage(Message msg) {
+>		}
+>	};
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ 	GCMRegistrar.checkDevice(this);
+        GCMRegistrar.checkManifest(this);
+        
+        final String regId = GCMRegistrar.getRegistrationId(this);
+        
+        Intent registrationIntent = new Intent("com.google.android.c2dm.intent.REGISTER");
+        // sets the app name in the intent
+        registrationIntent.putExtra("app",PendingIntent.getBroadcast(this, 0, new Intent(), 0));
+        registrationIntent.putExtra("sender", SENDER_ID);
+        startService(registrationIntent);
+        
+        if (regId.equals("")) {
+			GCMRegistrar.register(this, SENDER_ID);
+		}else{
+			Log.v("test", "Alredy registered");
+			Log.v("test", regId+"");
+		}
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+http://www.androidhive.info/2012/10/android-push-notifications-using-google-cloud-messaging-gcm-php-and-mysql/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

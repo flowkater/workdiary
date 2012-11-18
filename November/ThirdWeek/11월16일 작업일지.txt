@@ -1,0 +1,48 @@
+11월17일 작업일지
+== Deal module 완성하자.
+지금 생긴 문제.
+Client
+1. 클라이언트, 유저 분기가 잘못되었다.(클라이언트일때 유저로써 일을 처리할때 문제가 생긴다.)
+2. Dialog Progress 가 뜰때 접속이 안되면 취소가 안되고 계속 문제가 생긴다.
+3. 서버 다른 Dialog 처리.
+4. Facebook 처리
+5. GCM 받기
+Server
+1. 쿠키 모델을 둘것인지, 컬럼에서 운영할것인지 결정.
+2. 기프티콘 생성 모듈에서 쿠키를 체크하는 컨트롤러 구현.
+3. 태스크 생성때 쿠키 전송. - 실패시 처리 (USER -> TASK), 그리고 log 기록
+4. 리뷰를 쓰면 쿠키 전송. (TASK -> CLIENT) , 그리고 log 기록 -> cash Log 모델 필요.
+5. GCM 처리
+===============
+1. 쿠키를 컬럼에서 운영을 하자.
+2. Giftcon Price 와 User의 Price를 처리하자.
+	1) check 를 먼저하자.
+check 를 할 필요가 있을까? create action 을 하면서 체크를 하면 될것 같다.
+그러나 task 를 create 하기전에 만들어지기 때문에 create action 은 적절하지 않은 것 같고..
+rendering 할수있는 action을 넣어보자.
+
+** warning
+ giftitem 을 check 를 하고 action 을 받으면 그걸 이용해서 tasks controller 에서 바로 create action을 발생시키자.
+fromdate 와 enddate 발생 시점에 따라.. 바뀐다.
+
+giftitem 의 아이디를 통해서 attributes 를 접근할 수 있다.
+giftcon 은 그러면, task, client, giftitem 에 모두 소속 된다. status 를 통해서 사용을 할 수 있다.
+
+취소할때 다시 쿠키를 반납.(삭제)
+
+client 는 create_review_client action을 하
+면 기프티콘을 받는다.
+review action으로 빠져야될듯.
+기프티콘의 아이디만 옮겨지면 완료.
+==============================================
+GCM 처리 해보자.
+
+먼저 기본 서비스에 대해서 공부하고 들어가자.
+
+
+
+
+
+
+
+
