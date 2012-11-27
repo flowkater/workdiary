@@ -1,0 +1,35 @@
+ public class MainActivity extends Activity {
+	Button sendButton;
+	String phoneNum;
+	String message;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        sendButton = (Button)findViewById(R.id.sendBtn);
+        
+        TelephonyManager telManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE); 
+		phoneNum = telManager.getLine1Number();
+		
+		message = randomRange(1000, 9999) + "";
+		
+		
+		sendButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				sendSMS(phoneNum, message);
+			}
+		});
+    }
+    
+    private void sendSMS(String phoneNum, String message){
+    	PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this,MainActivity.class), 0);
+    	SmsManager sms = SmsManager.getDefault();
+    	sms.sendTextMessage(phoneNum, null, message, pi, null);
+    }
+    
+    public static int randomRange(int n1, int n2){
+    	return (int) (Math.random() * (n2 - n1 + 1)) + n1;
+    }
+}

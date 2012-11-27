@@ -1,0 +1,36 @@
+11월19일 작업일지
+http://www.androidhive.info/2012/10/android-push-notifications-using-google-cloud-messaging-gcm-php-and-mysql/
+
+
+AlertDialogManager alert = new AlertDialogManager();
+
+// Connection detector
+ConnectionDetector cd;
+
+cd = new ConnectionDetector(getApplicationContext());
+// Check if Internet present
+if (!cd.isConnectingToInternet()) {
+	// Internet Connection is not present
+	alert.showAlertDialog(MainActivity.this,
+			"Internet Connection Error",
+			"Please connect to working Internet connection", false);
+	// stop executing code by return
+	return;
+}
+
+==============================================================
+Batoncreate_PostATask_Detail -> batoncreate_posttask_gift_detail.xml
+f6a863a6657994a0d8dacd894a13ab05
+
+Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+		mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+
+소소한 이야기
+정희 와플
+달콤한 co끼리
+빵 사이에 낀 과일
+앤드류스 에그타르트 (Andrew's Egg Tart)
+
+
+http://stackoverflow.com/questions/2307688/crash-in-listview-at-abslistview-obtainview-for-listactivity

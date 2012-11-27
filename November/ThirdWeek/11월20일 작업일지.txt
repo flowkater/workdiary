@@ -1,0 +1,16 @@
+// Font path
+String fontPath = "fonts/Face Your Fears.ttf";
+// text view label
+TextView txtGhost = (TextView) findViewById(R.id.ghost);
+// Loading Font Face
+Typeface tf = Typeface.createFromAsset(getAssets(), fontPath);
+// Applying font
+txtGhost.setTypeface(tf);
+
+
+review[content]
+review[star]
+review[target_id]
+review[task_id]
+
+http://stackoverflow.com/questions/2468366/rails-transaction-save-data-in-multiple-models
