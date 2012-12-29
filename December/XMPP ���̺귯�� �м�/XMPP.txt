@@ -1,0 +1,58 @@
+XMPP(Extensible Messaging and Presence Protocol) = Jabber 
+> XML 기반 인터넷 통신을 위한 오픈 프로토콜.
+> XML 을 기반으로 하는 확장 가능한 프로토콜.
+> 인터넷 상의 두 지점 사이에서 메시지, 사용자 상태정보(Presence), 
+> 어떤 구조적 정보를 실시간으로 교환하기 위한 일련의 오픈 XML 프로토콜 및 기술.
+
+XMPP 아키텍쳐
+> XMPP client - XMPP Server - XMPP Client
+
+XMPP 프로토콜
+> XML 메시지를 사용하여 TCP 소켓 상에서 발생하는 비교적 단순한 프로토콜.
+> 비동기 통신이 XML 스트림 내에서 XML #스탠자#를 통해 발생한다.
+> XML 스트림은 두 Entity 간에 발생하는 XML 정보 교환을 캡슐화하는 #엔벨로프#.
+
+=== 단어 정의를 위한 간단한 XMPP 에이전트
+require 'xmpp4r/client'
+
+# Create a *very* simple dictionary using a hash
+hash = {}
+hash['ruby'] = 'Greatest little object oriented scripting language'
+hash['xmpp4r'] = 'Simple XMPP library for ruby'
+hash['xmpp'] = 'Extensible Messaging and Presence Protocol'
+
+# Connect to the server and authenticate
+jid = Jabber::JID::new('bot@default.rs/Home')
+cl = Jabber::Client::new(jid)
+cl.connect
+cl.auth('password')
+
+# Indicate our presence to the server
+cl.send Jabber::Presence::new
+
+# Send a salutation to a given user that we're ready
+salutation = Jabber::Message::new( 'hal@default.rs', 'DictBot ready' )
+salutation.set_type(:chat).set_id('1')
+cl.send salutation 
+
+# Add a message callback to respond to peer requests
+cl.add_message_callback do |inmsg|
+
+    # Lookup the word in the dictionary
+    resp = hash[inmsg.body]
+    if resp == nil
+      resp = "don't know about " + inmsg.body
+    end
+
+    # Send the response
+    outmsg = Jabber::Message::new( inmsg.from, resp )
+    outmsg.set_type(:chat).set_id('1')
+    cl.send outmsg
+
+end
+
+# Run
+while 1
+end
+===
+

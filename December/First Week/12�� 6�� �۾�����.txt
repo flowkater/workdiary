@@ -1,0 +1,10 @@
+12월 6일 작업일지
+*AsyncTask
+- onProgressUpdate(Integer... progress)
+: 중간중간 작업의 진행정도를 알릴때 사용되는 함수이다.
+  이 함수의 호출은 직접하는 것이 아니다. 이 함수를 호출하려면 doInBackground에서
+  publishProgress 를 호출해 주면 되는 것이다. 이유인즉, 다른 쓰레드에서 UI를 직접 바꾸는 것은 허용되지 않는다.
+  onProgressUpdate는 보통 UI를 직접 바꾸는 코드를 가지고 있을 것이고 그것을 직접 doInBackground 에서 부르는 것은 허용되지 않는다.
+  publicProgress는 아마도 UIThread에 onProgressUpdate 를 posting 해주는 역할을 할 것이다.
+  이 함수는 UI 쓰레드에서 실행된다.
+

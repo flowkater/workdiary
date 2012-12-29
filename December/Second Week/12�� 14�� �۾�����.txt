@@ -1,0 +1,8 @@
+12월 14일 작업일지
+* 채팅 리스트뷰 작성
+http://www.tipssoft.com/bulletin/board.php?bo_table=update&wr_id=1470
+* BaseAdapter
+* TextView : maxWidth = 130dp
+
+OpenFire
+Candy, OfChat(WebSocket)

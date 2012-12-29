@@ -1,0 +1,59 @@
+XMPP Android Client analysis
+
+*TextWatcher
+- onTextChanged : Text 내용이 바뀔때
+- beforeTextChanged : Text 내용이 바뀐 기준, 그전에
+- afterTextChanged : Text 내용이 바뀌고 나서.
+
+*SimpleCursorAdapter
+public SimpleCursorAdapter (Context context, int layout, Cursor c, String[] from, int[] to)
+- DB 에 담긴 정보를 ListView 에 표시할 때 주로 SimpleCursorAdapter 를 많이 사용
+
+*TypedValue
+- 해상도 구해올때 쓰는 클래스
+
+*ResolveAttribute
+public static final Object ResolveAttribute
+Attribute name used to identify the resolving parent set of attributes, 
+if one is defined.
+
+*ColorDrawable
+
+*ContentProvider
+
+*IBinder
+
+1. 메시지 보내는 Logic
+- onKey(View v, int keyCode, KeyEvent event) in ChatWindow 이벤트 발생
+KeyEvent.ACTION_DOWN && KeyEvent.KEYCODE_ENTER
+sendMessageIfNotNull() 호출
+
+- sendMessageIfNotNull() in ChatWindow
+글자가 한 자 이상일 때 메시지를 보낸다.
+sendMessage(String message) 호출
+
+- sendMessage(String message) in ChatWindow
+EditText NUll 로 초기화, Button disabled 
+XMPPChatServiceAdapter 의 sendMessage(String user, String message) 호출
+
+- sendMessage(String user, String message) in XMPPChatServiceAdapter
+try catch 문으로 IXMPPChatService 의 sendMessage 메서드 호출
+
+2. 리스트뷰 row -> ChatItemWrapper (ViewHolder)
+
+3. setContactFromUri()
+- Intent i = getIntent();
+
+4. registerXMPPService
+*Intent => setData, setAction
+*ServiceConnection()
+*ComponentName
+*IBinder
+
+
+
+
+
+
+
+

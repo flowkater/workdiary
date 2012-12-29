@@ -1,0 +1,2 @@
+12월 5일 수요일
+*TabHost 쓸때 ListView layout_height="wrap_content" 할때 id:tabhost 에러 발생

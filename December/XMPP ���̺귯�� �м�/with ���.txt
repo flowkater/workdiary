@@ -1,0 +1,13 @@
+Service
+
+Bind 후에 진행
+
+Handler 메시지가 없을때 
+
+runOnUiThread
+
+ListView talks
+
+현재 포지션 구하는 메서드.  focus
+
+

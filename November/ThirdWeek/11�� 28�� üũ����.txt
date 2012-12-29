@@ -1,0 +1,13 @@
+1. 서드파티 서버랑 통신체크.
+2. 페이스북 authetication_token ?  => 원인 모름
+3. 회원가입 프로필 사진 업로드
+4. 인증버튼, 확인, 가입완료
+5. 이메일형식 체크,  비밀번호 6자 이상 체크. 비밀번호+비밀번호 확인 동일 체크.
+6. 닉네임 체크.
+7. 회원가입 인증 확인 후 Alert Dialog.
+8. 회원가입 2 에서 Null 값 체크. => company 는 null 값 가능.
+9. Task Create NUll 값 체크.
+10. 러너등록 onClick
+11. SeeMore OnClick 
+12.
+13.
